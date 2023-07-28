@@ -1,0 +1,39 @@
+{
+  "name": "discord-bot-messenger",
+  "version": "1.0.0",
+  "main": "dist-electron/main/index.js",
+  "description": "Really simple Electron + Vue + Vite boilerplate.",
+  "author": "John Uberbacher",
+  "license": "MIT",
+  "private": true,
+  "keywords": [
+    "electron",
+    "rollup",
+    "vite",
+    "vue3",
+    "vue"
+  ],
+  "debug": {
+    "env": {
+      "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && electron-builder",
+    "preview": "vite serve"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.1.0",
+    "electron": "^25.0.1",
+    "electron-builder": "^24.4.0",
+    "vite": "^4.1.4",
+    "vite-plugin-electron": "^0.12.0",
+    "vite-plugin-electron-renderer": "^0.14.1",
+    "vue": "^3.2.47"
+  },
+  "dependencies": {
+    "discord.js": "^14.11.0",
+    "electron-store": "^8.1.0"
+  }
+}

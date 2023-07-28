@@ -1,0 +1,338 @@
+:root {
+  --base-primary: rgb(88, 101, 242);
+  --base-button-background: rgb(88, 101, 242);
+  --base-button-background-hover: rgb(80, 91, 219);
+  --base-button-background-active: rgb(74, 85, 203);
+  // --base-success: rgb(38, 126, 70);
+  --base-success: rgb(35 165 90);
+  --base-danger: rgb(214, 59, 64);
+  --base-100: #383a40;
+  --base-200: #313338;
+  --base-300: #2b2d31;
+  --base-400: #232428;
+  --base-500: #1e1f22;
+  --base-600: #111214;
+  --base-text: #dbdee1;
+  --base-text-label: #949ba4;
+}
+
+*,
+*:before,
+*:after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+@mixin no-select {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Old versions of Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+}
+
+@font-face {
+  font-family: "gg sans";
+  src: url("assets/fonts/gg_sans_Normal.ttf") format("trueType");
+}
+
+@font-face {
+  font-family: "gg sans semibold";
+  src: url("assets/fonts/gg_sans_Semibold.ttf") format("trueType");
+}
+
+@font-face {
+  font-family: "gg sans bold";
+  src: url("assets/fonts/gg_sans_Bold.ttf") format("trueType");
+}
+
+html,
+body,
+#app {
+  min-width: 530px;
+  height: 100%;
+}
+
+#app {
+  position: relative;
+}
+
+.error {
+  color: var(--base-danger);
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.disabled,
+:disabled {
+  cursor: not-allowed;
+}
+
+body {
+  background-color: var(--base-200);
+  font-family: "gg sans", sans-serif;
+  font-size: 12px;
+  color: var(--base-text-label);
+}
+
+.w-full {
+  width: 100%;
+}
+
+.input-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  background-color: var(--base-100);
+  border-radius: 8px;
+  padding: 0px 8px 0px 16px;
+  overflow: hidden;
+  color: var(--base-text);
+  button {
+    appearance: none;
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+    opacity: 1;
+    cursor: pointer;
+    margin-top: 8px;
+    padding-left: 8px;
+    height: 28px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--base-primary);
+    background-color: transparent;
+    transition: 0.25s all ease;
+    border-left: 1px solid var(--base-200);
+    &:not(.disabled):hover,
+    &:not(.disabled):active {
+      color: var(--base-text);
+    }
+    &.disabled {
+      cursor: not-allowed;
+      color: var(--base-text-label);
+      opacity: 0.4;
+    }
+    svg {
+      height: 22px;
+      width: 22px;
+    }
+  }
+  input[type="text"] {
+    word-wrap: break-word;
+    word-break: break-all;
+    width: 100%;
+    background-color: var(--base-100);
+    border: none;
+    outline: none;
+    min-height: 44px;
+    color: var(--base-text);
+    &::placeholder {
+      color: var(--base-text-label);
+    }
+  }
+  .error {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
+}
+
+.menu-bar {
+  @include no-select;
+}
+
+.icon-settings {
+  width: 1.5rem;
+  height: 1.5rem;
+  cursor: pointer;
+  color: var(--base-text-label);
+}
+
+.icon-settings:hover {
+  color: var(--base-text);
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px,
+    rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.1) 0px 2px 4px -2px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-start {
+  align-items: flex-start;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.gap-1 {
+  gap: 1rem;
+}
+
+.toast {
+  @include no-select;
+  background-color: var(--base-success);
+  color: var(--base-text);
+  padding: 10px 14px 10px 14px;
+  border-radius: 5px;
+  position: absolute;
+  right: 1rem;
+  top: calc(22px + 1rem);
+  text-transform: uppercase;
+  font-size: 10px;
+  font-family: "gg sans semibold", sans-serif;
+  transition: 0.2s right;
+}
+
+.toast.error {
+  background-color: var(--base-danger);
+}
+
+.button-link {
+}
+
+.button {
+  @include no-select;
+  height: 32px;
+  padding: 2px 16px;
+  font-size: 14px;
+  font-family: "gg sans semibold", sans-serif;
+  border-radius: 3px;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  transition: 0.17s background-color ease, 0.17s color ease;
+}
+
+.button-primary {
+  color: white;
+  background-color: var(--base-button-background);
+  &:hover {
+    background-color: var(--base-button-background-hover);
+  }
+
+  &:active {
+    background-color: var(--base-button-background-active);
+  }
+}
+
+.button-link {
+  color: white;
+  background-color: transparent;
+  transition: 0.17s text-decoration ease;
+  &:hover {
+    background-color: transparent;
+    text-decoration: underline;
+  }
+
+  &:active {
+    background-color: transparent;
+  }
+}
+
+label {
+  @include no-select;
+  text-transform: uppercase;
+  display: block;
+  font-size: 10px;
+  font-family: "gg sans semibold", sans-serif;
+  margin-bottom: 6px;
+}
+
+select::-ms-expand {
+  display: none;
+}
+
+.select {
+  position: relative;
+  display: flex;
+  width: 100%;
+  min-height: 44px;
+  min-height: 44px;
+  border-radius: 0.25em;
+  overflow: hidden;
+  padding: 0px;
+}
+
+.select::after {
+  content: "";
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' aria-hidden='true' role='img' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M16.59 8.59003L12 13.17L7.41 8.59003L6 10L12 16L18 10L16.59 8.59003Z'%3E%3C/path%3E%3C/svg%3E");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: 24px 24px;
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  right: 0;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  transition: 0.25s all ease;
+  pointer-events: none;
+}
+
+select {
+  appearance: none;
+  outline: 0;
+  border: 0;
+  box-shadow: none;
+  cursor: pointer;
+  /* Personalize */
+  flex: 1;
+  color: #fff;
+  background-color: var(--base-500);
+  border-radius: 8px;
+  padding: 0px 16px;
+  background-image: none;
+  width: 100%;
+}

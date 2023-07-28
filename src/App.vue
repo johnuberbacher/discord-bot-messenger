@@ -93,10 +93,15 @@ const connectToDiscordBot = async () => {
         name: guild.name,
       }));
 
-      channels.value = client.channels.cache.map((channel) => ({
-        id: channel.id,
-        name: channel.name,
-      }));
+      // Modify the channels.value array to exclude channels whose names end in " Channels"
+      channels.value = client.channels.cache
+        .filter((channel) => !channel.name.endsWith(" Channels"))
+        .map((channel) => ({
+          id: channel.id,
+          name: channel.name,
+        }));
+
+      console.log(channels.value);
 
       connectedToBot.value = true;
     });
@@ -108,6 +113,7 @@ const connectToDiscordBot = async () => {
     // toggleConfig();
   }
 };
+
 
 // Define a reactive variable to track whether the bot is connected or not
 const isBotConnected = ref(false);

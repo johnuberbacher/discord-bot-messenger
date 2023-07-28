@@ -1,6 +1,10 @@
 :root {
   --base-primary: rgb(88, 101, 242);
-  --base-success: rgb(35, 165, 90);
+  --base-button-background: rgb(88, 101, 242);
+  --base-button-background-hover: rgb(80, 91, 219);
+  --base-button-background-active: rgb(74, 85, 203);
+  // --base-success: rgb(38, 126, 70);
+  --base-success: rgb(35 165 90);
   --base-danger: rgb(214, 59, 64);
   --base-100: #383a40;
   --base-200: #313338;
@@ -279,7 +283,7 @@ body {
   text-decoration: underline;
 }
 
-.label {
+label {
   @include no-select;
   text-transform: uppercase;
   display: block;

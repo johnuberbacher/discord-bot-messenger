@@ -97,9 +97,6 @@ const saveConfig = async () => {
     return;
   }
 
-  // Add a one-second delay here
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
   // Save the bot token to the store
   await store.set("discordBotTokenStorage", discordBotTokenStorage.value);
 
@@ -108,6 +105,9 @@ const saveConfig = async () => {
 
   // Emit the "connectToDiscordBot" event to notify the parent component
   await emit("connectToDiscordBot");
+
+  // Add a one-second delay here
+  await new Promise((resolve) => setTimeout(resolve, 1000));
 
   // Check bot connection validation and proceed accordingly
   if (validateBotConnection()) {
@@ -119,14 +119,10 @@ const saveConfig = async () => {
 
 // Function to dismiss the configuration without saving
 const dismissConfig = () => {
-  if (!discordBotTokenStorage.value) {
+  if (!store.get("discordBotTokenStorage")) {
     error.value = "Please enter a bot token";
     shake();
     isLoading.value = false;
-    return;
-  }
-
-  if (!validateBotConnection()) {
     return;
   }
 

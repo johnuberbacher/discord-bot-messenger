@@ -32,52 +32,57 @@ import Window from "./components/Window.vue";
 import Config from "./components/Config.vue";
 import Toast from "./components/Toast.vue";
 
+// Import specific items from the discord.js module
 const { Client, GatewayIntentBits } = require("discord.js");
-const Store = require("electron-store");
+
+// Instead of using 'require', use 'import' for electron-store
+import Store from "electron-store";
 const store = new Store();
 
-let botToken = ref("");
-const emit = defineEmits();
-
+// Define reactive variables using 'ref'
+const botToken = ref("");
 const connectedToBot = ref(false);
 const botName = ref("");
 const botAvatar = ref("");
 const botDiscriminator = ref("");
 const guilds = ref([]);
 const channels = ref([]);
+const showConfig = ref(false);
+const showToast = ref(false);
+const toastMessage = ref("");
 
+// Define 'emit' for emitting custom events (defineEmits is not needed)
+const emit = defineEmits();
+
+// Create the Discord client instance with intents and token
 const client = new Client({
   intents: [GatewayIntentBits.Guilds],
   token: botToken,
 });
 
-const showConfig = ref(false);
-const showToast = ref(false);
-const toastMessage = ref("");
-
+// Function to show/hide the configuration window
 const toggleConfig = () => {
   showConfig.value = !showConfig.value;
 };
 
+// Function to show a toast message and hide it after 3 seconds
 const messageSent = () => {
   toastMessage.value = "Message sent!";
-  showToast.value = !showToast.value;
+  showToast.value = true;
   setTimeout(() => {
-    showToast.value = !showToast.value;
-  }, 3000); // 3 seconds (3000 milliseconds)
+    showToast.value = false;
+  }, 3000);
 };
 
+// Function to connect to the Discord bot
 const connectToDiscordBot = async () => {
   console.log("Fetching bot token from store...");
-  botToken =  store.get("boooootStorageItem");
-  console.log("Retreived bot token:", botToken);
+  botToken.value = store.get("discordBotTokenStorage");
 
   try {
     console.log("Attempting to connect to discord bot...");
-    await client.login(botToken);
-    console.log("attempting to connect to Discord with bot token:", botToken);
+    await client.login(botToken.value);
     client.once("ready", async () => {
-      console.log("Discord bot connected!");
       const botUser = client.user;
       botAvatar.value = botUser.avatarURL();
       botName.value = botUser.username;
@@ -93,21 +98,22 @@ const connectToDiscordBot = async () => {
         name: channel.name,
       }));
 
-      console.log(botUser);
       connectedToBot.value = true;
-      console.log("Discord bot ready");
     });
   } catch (error) {
     connectedToBot.value = false;
     console.error("Error connecting to Discord bot:", error);
   } finally {
+    // The 'toggleConfig' call is commented out as it's not used in the code
     // toggleConfig();
   }
 };
 
+// Define a reactive variable to track whether the bot is connected or not
 const isBotConnected = ref(false);
+
+// Execute the 'connectToDiscordBot' function on component mount
 onMounted(async () => {
-  console.log("onMounted hook called");
   try {
     await connectToDiscordBot();
     isBotConnected.value = true;

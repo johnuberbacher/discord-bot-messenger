@@ -11,11 +11,11 @@
           <div class="bot-status" :class="{ active: selectedGuild }"></div>
         </div>
         <div class="flex flex-column w-full">
-          <div class="bot-title" :class="{ skeleton: !props.botName }">
+          <div class="bot-title">
             {{ props.botName ?? "error" }}
             {{ props.botDiscriminator ? "#" + props.botDiscriminator : "" }}
           </div>
-          <div v-if="selectedGuild" class="bot-guild" :class="{ skeleton: !selectedGuild }">
+          <div v-if="selectedGuild" class="bot-guild">
             {{ selectedGuild ?? "error" }}
           </div>
         </div>
@@ -111,10 +111,8 @@
   </div>
 </template>
 
-
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
-const { GatewayIntentBits } = require("discord.js");
 
 const emit = defineEmits();
 const props = defineProps([
@@ -127,32 +125,28 @@ const props = defineProps([
   "client",
 ]);
 
+// State variables
 const selectedGuildId = ref("");
 const selectedChannel = ref("");
 const error = ref("");
 const message = ref("");
 
+// Computed property to get the name of the selected guild
 const selectedGuild = computed(() => {
-  const selectedGuildObj = props.guilds.find(
-    (guild) => guild.id === selectedGuildId.value
-  );
-  return selectedGuildObj ? selectedGuildObj.name : "";
+  const selectedGuildObj = props.guilds.find(guild => guild.id === selectedGuildId.value);
+  return selectedGuildObj?.name || "";
 });
 
+// Computed property to check if the form is valid
 const isValidForm = computed(() => {
-  return (
-    !!selectedChannel.value &&
-    !!message.value.trim() &&
-    selectedGuildId.value !== ""
-  );
+  return selectedChannel.value && message.value.trim() && selectedGuildId.value !== "";
 });
 
+// Method to submit the form and send the message
 const submitForm = () => {
   if (isValidForm.value) {
-    // Get the selected channel object
-    const selectedChannelObj = props.channels.find(
-      (channel) => channel.id === selectedChannel.value
-    );
+    // Find the selected channel object
+    const selectedChannelObj = props.channels.find(channel => channel.id === selectedChannel.value);
 
     if (selectedChannelObj) {
       // Send the message using the client instance and appropriate methods
@@ -165,7 +159,7 @@ const submitForm = () => {
           // Clear the message input field
           message.value = "";
         })
-        .catch((error) => {
+        .catch(error => {
           console.error("Error sending message:", error);
         });
     }
@@ -174,8 +168,6 @@ const submitForm = () => {
 </script>
 
 <style lang="scss" scoped>
-
-
 .window-content {
   position: relative;
   display: flex;
@@ -219,25 +211,12 @@ const submitForm = () => {
   }
   .bot-title {
     font-size: 18px;
-    font-family: 'gg sans bold', sans-serif;
+    font-family: "gg sans bold", sans-serif;
     color: var(--base-text);
-    &.skeleton {
-      height: 24px;
-      background-color: var(--base-100);
-      width: 50%;
-      border-radius: 5px;
-      margin-top: 0.25rem;
-    }
   }
   .bot-guild {
     font-size: 12px;
-    font-family: 'gg sans semibold', sans-serif;
-    &.skeleton {
-      height: 16px;
-      background-color: var(--base-100);
-      width: 25%;
-      border-radius: 5px;
-    }
+    font-family: "gg sans semibold", sans-serif;
   }
 }
 </style>

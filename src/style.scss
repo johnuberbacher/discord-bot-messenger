@@ -1,10 +1,6 @@
 :root {
   --base-primary: rgb(88, 101, 242);
-  --base-button-background: rgb(88, 101, 242);
-  --base-button-background-hover: rgb(80, 91, 219);
-  --base-button-background-active: rgb(74, 85, 203);
-  // --base-success: rgb(38, 126, 70);
-  --base-success: rgb(35 165 90);
+  --base-success: rgb(35, 165, 90);
   --base-danger: rgb(214, 59, 64);
   --base-100: #383a40;
   --base-200: #313338;
@@ -26,12 +22,7 @@
 }
 
 @mixin no-select {
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-  -khtml-user-select: none; /* Konqueror HTML */
-  -moz-user-select: none; /* Old versions of Firefox */
-  -ms-user-select: none; /* Internet Explorer/Edge */
-  user-select: none; /* Non-prefixed version, currently supported by Chrome, Edge, Opera and Firefox */
+  user-select: none;
 }
 
 @font-face {
@@ -100,57 +91,64 @@ body {
   padding: 0px 8px 0px 16px;
   overflow: hidden;
   color: var(--base-text);
-  button {
-    appearance: none;
-    outline: 0;
-    border: 0;
-    box-shadow: none;
-    opacity: 1;
-    cursor: pointer;
-    margin-top: 8px;
-    padding-left: 8px;
-    height: 28px;
-    width: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--base-primary);
-    background-color: transparent;
-    transition: 0.25s all ease;
-    border-left: 1px solid var(--base-200);
-    &:not(.disabled):hover,
-    &:not(.disabled):active {
-      color: var(--base-text);
-    }
-    &.disabled {
-      cursor: not-allowed;
-      color: var(--base-text-label);
-      opacity: 0.4;
-    }
-    svg {
-      height: 22px;
-      width: 22px;
-    }
-  }
-  input[type="text"] {
-    word-wrap: break-word;
-    word-break: break-all;
-    width: 100%;
-    background-color: var(--base-100);
-    border: none;
-    outline: none;
-    min-height: 44px;
-    color: var(--base-text);
-    &::placeholder {
-      color: var(--base-text-label);
-    }
-  }
-  .error {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-  }
+}
+
+.input-wrapper button {
+  appearance: none;
+  outline: 0;
+  border: 0;
+  box-shadow: none;
+  opacity: 1;
+  cursor: pointer;
+  margin-top: 8px;
+  padding-left: 8px;
+  height: 28px;
+  width: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--base-primary);
+  background-color: transparent;
+  transition: 0.25s all ease;
+  border-left: 1px solid var(--base-200);
+}
+
+.input-wrapper button:not(.disabled):hover,
+.input-wrapper button:not(.disabled):active {
+  color: var(--base-text);
+}
+
+.input-wrapper button.disabled {
+  cursor: not-allowed;
+  color: var(--base-text-label);
+  opacity: 0.4;
+}
+
+.input-wrapper button svg {
+  height: 22px;
+  width: 22px;
+}
+
+.input-wrapper input[type="text"] {
+  word-wrap: break-word;
+  word-break: break-all;
+  width: 100%;
+  background-color: var(--base-100);
+  border: none;
+  outline: none;
+  min-height: 44px;
+  color: var(--base-text);
+}
+
+.input-wrapper input[type="text"]::placeholder {
+  color: var(--base-text-label);
+}
+
+.input-wrapper .error {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .menu-bar {
@@ -236,9 +234,7 @@ body {
   background-color: var(--base-danger);
 }
 
-.button-link {
-}
-
+.button-link,
 .button {
   @include no-select;
   height: 32px;
@@ -252,33 +248,38 @@ body {
   transition: 0.17s background-color ease, 0.17s color ease;
 }
 
+.button-link.disabled,
+.button.disabled,
+.button-link:disabled,
+.button:disabled {
+  cursor: not-allowed;
+}
+
 .button-primary {
   color: white;
   background-color: var(--base-button-background);
-  &:hover {
-    background-color: var(--base-button-background-hover);
-  }
+}
 
-  &:active {
-    background-color: var(--base-button-background-active);
-  }
+.button-primary:hover {
+  background-color: var(--base-button-background-hover);
+}
+
+.button-primary:active {
+  background-color: var(--base-button-background-active);
 }
 
 .button-link {
   color: white;
   background-color: transparent;
   transition: 0.17s text-decoration ease;
-  &:hover {
-    background-color: transparent;
-    text-decoration: underline;
-  }
-
-  &:active {
-    background-color: transparent;
-  }
 }
 
-label {
+.button-link:hover {
+  background-color: transparent;
+  text-decoration: underline;
+}
+
+.label {
   @include no-select;
   text-transform: uppercase;
   display: block;
@@ -295,7 +296,6 @@ select::-ms-expand {
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 44px;
   min-height: 44px;
   border-radius: 0.25em;
   overflow: hidden;
@@ -327,7 +327,6 @@ select {
   border: 0;
   box-shadow: none;
   cursor: pointer;
-  /* Personalize */
   flex: 1;
   color: #fff;
   background-color: var(--base-500);

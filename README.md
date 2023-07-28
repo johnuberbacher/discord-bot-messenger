@@ -8,6 +8,8 @@ Discord Bot Messenger is a cross-platform (Windows, Linux, macOS) desktop applic
 - Cross-platform compatibility, supporting Windows, Linux, and macOS.
 - Seamless integration with Discord bots using the Discord.js library.
 - Simplified setup and configuration using Electron, Vue, and Vite.
+- Bot Token gets stored to local appdata for security and persistence.
+- Real-time bot status updates: While the app is open and the bot token is active, the Bot will appear online on Discord.
 
 ## Installation
 

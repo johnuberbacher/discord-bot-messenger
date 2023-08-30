@@ -31,17 +31,17 @@
 
 @font-face {
   font-family: "gg sans";
-  src: url("assets/fonts/gg_sans_Normal.ttf") format("trueType");
+  src: url("/assets/fonts/gg_sans_Normal.ttf") format("trueType");
 }
 
 @font-face {
   font-family: "gg sans semibold";
-  src: url("assets/fonts/gg_sans_Semibold.ttf") format("trueType");
+  src: url("/assets/fonts/gg_sans_Semibold.ttf") format("trueType");
 }
 
 @font-face {
   font-family: "gg sans bold";
-  src: url("assets/fonts/gg_sans_Bold.ttf") format("trueType");
+  src: url("/assets/fonts/gg_sans_Bold.ttf") format("trueType");
 }
 
 html,
@@ -69,7 +69,7 @@ body,
 
 .disabled,
 :disabled {
-  cursor: not-allowed;
+  cursor: not-allowed !important;
 }
 
 body {
@@ -95,66 +95,99 @@ body {
   padding: 0px 8px 0px 16px;
   overflow: hidden;
   color: var(--base-text);
+  &.disabled {
+    cursor: not-allowed;
+    color: var(--base-text-label);
+    opacity: 0.4;
+  }
+
+  button {
+    appearance: none;
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+    opacity: 1;
+    cursor: pointer;
+    margin-top: 8px;
+    padding-left: 8px;
+    height: 28px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--base-text-label);
+    opacity: 0.5;
+    background-color: transparent;
+    transition: 0.25s all ease;
+    border-left: 1px solid var(--base-200);
+    
+    &:not(.disabled) {
+      color: var(--base-primary);
+      opacity: 1.0;
+    }
+    &:not(.disabled):hover,
+    &:not(.disabled):active {
+      color: var(--base-primary);
+      opacity: 0.9;
+    }
+
+    svg {
+      height: 22px;
+      width: 22px;
+    }
+  }
+
+  .upload-image {
+    appearance: none;
+    outline: 0;
+    border: 0;
+    box-shadow: none;
+    opacity: 1;
+    cursor: pointer;
+    margin-top: 8px;
+    padding-right: 8px;
+    height: 28px;
+    width: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--base-primary);
+    background-color: transparent;
+    transition: 0.25s all ease;
+    svg {
+      height: 22px;
+      width: 22px;
+    }
+  }
+
+  input[type="text"] {
+    word-wrap: break-word;
+    word-break: break-all;
+    width: 100%;
+    background-color: var(--base-100);
+    border: none;
+    outline: none;
+    min-height: 44px;
+    color: var(--base-text);
+  }
+
+  .error {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
 }
 
-.input-wrapper button {
-  appearance: none;
-  outline: 0;
-  border: 0;
-  box-shadow: none;
-  opacity: 1;
-  cursor: pointer;
-  margin-top: 8px;
-  padding-left: 8px;
-  height: 28px;
-  width: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--base-primary);
-  background-color: transparent;
-  transition: 0.25s all ease;
-  border-left: 1px solid var(--base-200);
-}
-
-.input-wrapper button:not(.disabled):hover,
-.input-wrapper button:not(.disabled):active {
-  color: var(--base-text);
-}
-
-.input-wrapper button.disabled {
-  cursor: not-allowed;
-  color: var(--base-text-label);
-  opacity: 0.4;
-}
-
-.input-wrapper button svg {
-  height: 22px;
-  width: 22px;
-}
-
-.input-wrapper input[type="text"] {
-  word-wrap: break-word;
-  word-break: break-all;
-  width: 100%;
-  background-color: var(--base-100);
-  border: none;
-  outline: none;
-  min-height: 44px;
-  color: var(--base-text);
-}
 
 .input-wrapper input[type="text"]::placeholder {
+  @include no-select;
   color: var(--base-text-label);
 }
 
-.input-wrapper .error {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
+.footer,
+.bot-title,
+.bot-guild,
 .menu-bar {
   @include no-select;
 }
@@ -297,6 +330,7 @@ select::-ms-expand {
 }
 
 .select {
+  @include no-select;
   position: relative;
   display: flex;
   width: 100%;

@@ -41,7 +41,7 @@ const store = new Store();
 let win = null;
 const preload = join(__dirname, "../preload/index.js");
 const url = process.env.VITE_DEV_SERVER_URL;
-const indexHtml = join(process.env.DIST, "index.html");
+const indexHtml = join(process.env.PUBLIC, "index.html");
 
 async function createWindow() {
   win = new BrowserWindow({
@@ -66,7 +66,6 @@ async function createWindow() {
       nodeIntegration: true,
       contextIsolation: false,
       enableRemoteModule: true,
-      devTools: false,
     },
   });
 

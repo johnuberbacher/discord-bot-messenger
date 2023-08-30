@@ -6,18 +6,6 @@
   "author": "John Uberbacher",
   "license": "MIT",
   "private": true,
-  "keywords": [
-    "electron",
-    "rollup",
-    "vite",
-    "vue3",
-    "vue"
-  ],
-  "debug": {
-    "env": {
-      "VITE_DEV_SERVER_URL": "http://127.0.0.1:3344/"
-    }
-  },
   "scripts": {
     "dev": "vite",
     "build": "vite build && electron-builder",
@@ -25,6 +13,40 @@
     "app:dir": "electron-builder --dir",
     "app:dist": "electron-builder",
     "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "productName": "Discord Bot Messenger",
+    "appId": "com.johnuberbacher.discordbotmessenger",
+    "asar": true,
+    "directories": {
+      "output": "release/${version}"
+    },
+    "mac": {
+      "artifactName": "${productName}.${ext}",
+      "target": [
+        "dmg"
+      ]
+    },
+    "win": {
+      "target": [
+        "portable", "zip"
+      ],
+      "icon": "public/favicon.ico",
+      "artifactName": "${productName}.${ext}",
+      "executableName": "Discord Bot Messenger"
+    },
+    "nsis": {
+      "shortcutName": "Discord Bot Messenger",
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createStartMenuShortcut": true,
+      "deleteAppDataOnUninstall": false,
+			"installerIcon": "public/favicon.ico",
+			"uninstallerIcon": "public/favicon.ico",
+			"uninstallDisplayName": "Uninstall",
+			"license": "public/license.txt"
+    }
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",

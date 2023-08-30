@@ -5,7 +5,7 @@
         <div
           class="bot-avatar"
           style="
-            background-image: url('./src/assets/discord-bot-messenger.png');
+            background-image: url('/assets/discord-bot-messenger.png');
           "
           :style="{ backgroundImage: `url(${props.botAvatar})` }">
           <div class="bot-status" :class="{ active: selectedGuild }"></div>
@@ -103,7 +103,7 @@
         </div>
       </div>
     </form>
-    <div>
+    <div class="footer">
       Discord Bot Messenger is a fan-made service created by John Uberbacher.
       This app is not affiliated with or endorsed by Discord, and no ownership
       or rights are claimed.

@@ -76,7 +76,6 @@ const messageSent = () => {
 
 // Function to connect to the Discord bot
 const connectToDiscordBot = async () => {
-  console.log("Fetching bot token from store...");
   botToken.value = store.get("discordBotTokenStorage");
 
   try {
@@ -100,8 +99,6 @@ const connectToDiscordBot = async () => {
           id: channel.id,
           name: channel.name,
         }));
-
-      console.log(channels.value);
 
       connectedToBot.value = true;
     });

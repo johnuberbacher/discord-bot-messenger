@@ -160,6 +160,10 @@ onMounted(() => {
     font-size: 12px;
     color: var(--base-text-label);
   }
+  .input-wrapper input {
+    padding: 0px 16px;
+    border-radius: 8px;
+  }
   .button {
     &.button-primary {
       min-width: 65px;

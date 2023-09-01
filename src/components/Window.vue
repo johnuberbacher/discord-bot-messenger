@@ -4,9 +4,7 @@
       <div class="w-full flex flex-row items-center gap-1">
         <div
           class="bot-avatar"
-          style="
-            background-image: url('/assets/discord-bot-messenger.png');
-          "
+          style="background-image: url('/assets/discord-bot-messenger.png')"
           :style="{ backgroundImage: `url(${props.botAvatar})` }">
           <div class="bot-status" :class="{ active: selectedGuild }"></div>
         </div>
@@ -84,8 +82,12 @@
             v-model="message"
             :disabled="!selectedChannel || !selectedGuild"
             placeholder="Type your message here..." />
+          <EmojiPicker
+            :disabled="!selectedChannel || !selectedGuild"
+            @emoji-selected="appendEmoji"></EmojiPicker>
           <button
             type="submit"
+            class="submit"
             :class="{ disabled: !isValidForm }"
             :disabled="!isValidForm || !selectedChannel || !selectedGuild">
             <svg
@@ -113,6 +115,23 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
+import EmojiPicker from "./EmojiPicker.vue";
+
+const fileInput = ref(null);
+const selectedFile = ref(null);
+const buttonText = ref("");
+const handleFileChange = () => {
+  clearFile();
+  const file = fileInput.value.files[0];
+  if (file) {
+    selectedFile.value = file;
+    buttonText.value = file.name;
+  }
+};
+const clearFile = () => {
+  selectedFile.value = null;
+  buttonText.value = "";
+};
 
 const emit = defineEmits();
 const props = defineProps([
@@ -130,36 +149,63 @@ const selectedGuildId = ref("");
 const selectedChannel = ref("");
 const error = ref("");
 const message = ref("");
+const file = ref("");
 
 // Computed property to get the name of the selected guild
 const selectedGuild = computed(() => {
-  const selectedGuildObj = props.guilds.find(guild => guild.id === selectedGuildId.value);
+  const selectedGuildObj = props.guilds.find(
+    (guild) => guild.id === selectedGuildId.value
+  );
   return selectedGuildObj?.name || "";
 });
 
+const appendEmoji = (emoji) => {
+  message.value += emoji;
+};
+
 // Computed property to check if the form is valid
 const isValidForm = computed(() => {
-  return selectedChannel.value && message.value.trim() && selectedGuildId.value !== "";
+  return (
+    selectedChannel.value &&
+    message.value.trim() &&
+    selectedGuildId.value !== ""
+  );
 });
 
 // Method to submit the form and send the message
 const submitForm = () => {
   if (isValidForm.value) {
     // Find the selected channel object
-    const selectedChannelObj = props.channels.find(channel => channel.id === selectedChannel.value);
+    const selectedChannelObj = props.channels.find(
+      (channel) => channel.id === selectedChannel.value
+    );
 
     if (selectedChannelObj) {
+      let filesToSend = [];
+
+      if (selectedFile.value) {
+        var testchart = `http://jegin.net/testchart2.php?sysid=268.png`;
+
+        const filePath = selectedFile.value.path.toString();
+        // filesToSend.push({ attachment: 'https://i.imgur.com/y2ePdmF.jpg', name: selectedFile.value.name } );
+        console.log(filePath);
+        console.log(filesToSend);
+      }
+
       // Send the message using the client instance and appropriate methods
       props.client.channels.cache
         .get(selectedChannelObj.id)
-        .send(message.value.trim())
+        .send({
+          content: message.value.trim(),
+        })
         .then(() => {
           // Message sent successfully
           emit("messageSent");
-          // Clear the message input field
+          // Clear the message input field and file input
           message.value = "";
+          clearFile();
         })
-        .catch(error => {
+        .catch((error) => {
           console.error("Error sending message:", error);
         });
     }

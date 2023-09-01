@@ -75,7 +75,7 @@ body,
 body {
   background-color: var(--base-200);
   font-family: "gg sans", sans-serif;
-  font-size: 12px;
+  font-size: 14px;
   color: var(--base-text-label);
 }
 
@@ -92,8 +92,7 @@ body {
   justify-content: space-between;
   background-color: var(--base-100);
   border-radius: 8px;
-  padding: 0px 8px 0px 16px;
-  overflow: hidden;
+  padding: 0px 0px 0px 16px;
   color: var(--base-text);
   &.disabled {
     cursor: not-allowed;
@@ -101,59 +100,32 @@ body {
     opacity: 0.4;
   }
 
-  button {
+  .submit {
     appearance: none;
     outline: 0;
     border: 0;
     box-shadow: none;
     opacity: 1;
     cursor: pointer;
-    margin-top: 8px;
-    padding-left: 8px;
-    height: 28px;
-    width: 48px;
+    margin: 0;
+    padding: 0;
+    height: 44px;
+    width: 44px;
+    min-width: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--base-text-label);
-    opacity: 0.5;
+    color: rgba(78, 80, 88, 1);
     background-color: transparent;
     transition: 0.25s all ease;
-    border-left: 1px solid var(--base-200);
-    
-    &:not(.disabled) {
-      color: var(--base-primary);
-      opacity: 1.0;
-    }
+    border-left: 1px solid rgba(78, 80, 88, 1);
+
+    &:not(.disabled),
     &:not(.disabled):hover,
     &:not(.disabled):active {
       color: var(--base-primary);
-      opacity: 0.9;
     }
 
-    svg {
-      height: 22px;
-      width: 22px;
-    }
-  }
-
-  .upload-image {
-    appearance: none;
-    outline: 0;
-    border: 0;
-    box-shadow: none;
-    opacity: 1;
-    cursor: pointer;
-    margin-top: 8px;
-    padding-right: 8px;
-    height: 28px;
-    width: 48px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--base-primary);
-    background-color: transparent;
-    transition: 0.25s all ease;
     svg {
       height: 22px;
       width: 22px;
@@ -179,13 +151,63 @@ body {
   }
 }
 
-
 .input-wrapper input[type="text"]::placeholder {
   @include no-select;
   color: var(--base-text-label);
 }
 
-.footer,
+.emoji-picker-wrapper {
+  display: block;
+  white-space: nowrap;
+  position: relative;
+  box-shadow: none;
+  opacity: 1;
+  padding: 0;
+  margin: 0;
+  height: 44px;
+  color: rgba(78, 80, 88, 1);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: transparent;
+  transition: 0.25s all ease;
+
+  .button-wrapper {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    cursor: not-allowed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--base-text-label);
+    background-color: transparent;
+    appearance: none;
+    outline: 0;
+    border: 0;
+
+    &:hover,
+    &:active {
+      color: var(--base-text);
+    }
+
+    &:disabled:hover,
+    &:disabled:active,
+    &:disabled,
+    &.disabled {
+      cursor: not-allowed;
+      color: rgba(78, 80, 88, 1);
+    }
+
+    svg {
+      height: 22px;
+      width: 22px;
+      min-width: 22px;
+    }
+  }
+}
+
 .bot-title,
 .bot-guild,
 .menu-bar {
@@ -372,4 +394,9 @@ select {
   padding: 0px 16px;
   background-image: none;
   width: 100%;
+}
+
+.footer {
+  @include no-select;
+  font-size: 12px;
 }

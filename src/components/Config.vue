@@ -18,6 +18,7 @@
         <div class="error w-full">{{ error ?? "" }}</div>
         <div class="flex flex-row gap-1">
           <button
+            v-if="!discordBotTokenStorage.value || discordBotTokenStorage.value.length < 12"
             class="button button-link"
             @click="dismissConfig"
             :disabled="isLoading">
@@ -161,7 +162,6 @@ onMounted(() => {
     color: var(--base-text-label);
   }
   .input-wrapper input {
-    padding: 0px 16px;
     border-radius: 8px;
   }
   .button {

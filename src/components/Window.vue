@@ -76,13 +76,13 @@
           <span>Message</span>
           <div v-if="error" class="error">{{ error }}</div>
         </label>
+        
         <div class="input-wrapper">
-          <input
-            type="text"
+          <textarea
             v-model="message"
             :disabled="!selectedChannel || !selectedGuild"
-            placeholder="Type your message here..." />
-          <EmojiPicker
+            placeholder="Type your message here..." ></textarea>
+          <div class="flex flex-row items-center justify-end"><EmojiPicker
             :disabled="!selectedChannel || !selectedGuild"
             @emoji-selected="appendEmoji"></EmojiPicker>
           <button
@@ -101,7 +101,7 @@
                 stroke-linejoin="round"
                 d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
             </svg>
-          </button>
+          </button></div>
         </div>
       </div>
     </form>
@@ -206,7 +206,7 @@ const submitForm = () => {
           clearFile();
         })
         .catch((error) => {
-          console.error("Error sending message:", error);
+          emit("displayError", "Error sending message:" + error);
         });
     }
   }

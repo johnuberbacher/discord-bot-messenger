@@ -51,6 +51,30 @@ body,
   height: 100%;
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+  width: 0;
+  height: 0;
+  border-left: 16px solid var(--base-500);
+  border-top: 16px solid var(--base-500);
+  border-bottom: 16px solid transparent;
+  border-right: 16px solid transparent;
+}
+::-webkit-scrollbar-track {
+  background: var(--base-200);
+  cursor: pointer;
+}
+::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+  cursor: pointer;
+  border-radius: 8px;
+  background: var(--base-500);
+}
+
 #app {
   position: relative;
 }
@@ -97,7 +121,6 @@ body {
   &.disabled {
     cursor: not-allowed;
     color: var(--base-text-label);
-    opacity: 0.4;
   }
 
   .submit {
@@ -118,7 +141,16 @@ body {
     color: rgba(78, 80, 88, 1);
     background-color: transparent;
     transition: 0.25s all ease;
-    border-left: 1px solid rgba(78, 80, 88, 1);
+    position: relative;
+    &:after{ 
+      position: absolute;
+      content:'';
+      top: 8px;
+      left: 0;
+      bottom: 8px;
+      background: rgba(78, 80, 88, 1);
+      width: 1px;
+    }
 
     &:not(.disabled),
     &:not(.disabled):hover,
@@ -141,6 +173,31 @@ body {
     outline: none;
     min-height: 44px;
     color: var(--base-text);
+    &::placeholder {
+      @include no-select;
+      // color: var(--base-text-label);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+    word-wrap: break-word;
+    word-break: break-all;
+    font-family: "gg sans", sans-serif;
+    width: 100%;
+    height: auto;
+    padding-top: 10px;
+    line-height: 1.375rem;
+    background-color: var(--base-100);
+    border: none;
+    outline: none;
+    height: 44px;
+    min-height: 44px;
+    color: var(--base-text);
+    &::placeholder {
+      @include no-select;
+      // color: var(--base-text-label);
+    }
   }
 
   .error {
@@ -149,11 +206,6 @@ body {
     left: 0;
     right: 0;
   }
-}
-
-.input-wrapper input[type="text"]::placeholder {
-  @include no-select;
-  color: var(--base-text-label);
 }
 
 .emoji-picker-wrapper {
@@ -287,10 +339,10 @@ body {
   font-size: 10px;
   font-family: "gg sans semibold", sans-serif;
   transition: 0.2s right;
-}
 
-.toast.error {
-  background-color: var(--base-danger);
+  &.error {
+    background-color: var(--base-danger);
+  }
 }
 
 .button-link,

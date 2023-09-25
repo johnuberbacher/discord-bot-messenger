@@ -12,9 +12,13 @@
       :client="client"
       :botToken="botToken"
       @toggleConfig="toggleConfig"
-      @messageSent="messageSent" />
+      @messageSent="messageSent"
+      @displayError="displayError" />
     <transition name="fade" appear>
       <Toast :toastMessage="toastMessage" v-show="showToast" />
+    </transition>
+    <transition name="fade" appear>
+      <ErrorToast :errorMessage="errorMessage" v-show="showError"/>
     </transition>
     <Config
       v-if="showConfig || !connectedToBot"
@@ -31,6 +35,7 @@ import MenuBar from "./components/MenuBar.vue";
 import Window from "./components/Window.vue";
 import Config from "./components/Config.vue";
 import Toast from "./components/Toast.vue";
+import ErrorToast from "./components/ErrorToast.vue";
 
 // Import specific items from the discord.js module
 const { Client, GatewayIntentBits } = require("discord.js");
@@ -50,6 +55,8 @@ const channels = ref([]);
 const showConfig = ref(false);
 const showToast = ref(false);
 const toastMessage = ref("");
+const showError = ref(false);
+const errorMessage = ref("");
 
 // Define 'emit' for emitting custom events (defineEmits is not needed)
 const emit = defineEmits();
@@ -63,6 +70,16 @@ const client = new Client({
 // Function to show/hide the configuration window
 const toggleConfig = () => {
   showConfig.value = !showConfig.value;
+};
+
+// Function to show a toast message and hide it after 3 seconds
+const displayError = (error) => {
+  console.log('error here', error)
+  errorMessage.value = error;
+  showError.value = true;
+  setTimeout(() => {
+    showError.value = false;
+  }, 3000);
 };
 
 // Function to show a toast message and hide it after 3 seconds

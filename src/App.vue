@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="h-full">
     <MenuBar />
     <Window
       v-if="isBotConnected"
@@ -8,6 +8,7 @@
       :botDiscriminator="botDiscriminator"
       :channels="channels"
       :guilds="guilds"
+      :users="directMessageUsers"
       :isBotConnected="isBotConnected"
       :client="client"
       :botToken="botToken"
@@ -52,6 +53,7 @@ const botAvatar = ref("");
 const botDiscriminator = ref("");
 const guilds = ref([]);
 const channels = ref([]);
+const directMessageUsers = ref([]);
 const showConfig = ref(false);
 const showToast = ref(false);
 const toastMessage = ref("");

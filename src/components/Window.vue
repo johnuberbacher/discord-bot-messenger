@@ -8,7 +8,7 @@
           :style="{ backgroundImage: `url(${props.botAvatar})` }">
           <div class="bot-status" :class="{ active: selectedGuild }"></div>
         </div>
-        <div class="flex flex-column w-full">
+        <div class="flex flex-column w-full flex items-start content-start">
           <div class="bot-title">
             {{ props.botName ?? "error" }}
             {{ props.botDiscriminator ? "#" + props.botDiscriminator : "" }}
@@ -38,7 +38,7 @@
         </svg>
       </div>
     </div>
-    <form class="flex flex-column gap-1" @submit.prevent="submitForm">
+    <form class="flex flex-column gap-1 h-full" @submit.prevent="submitForm">
       <div>
         <label>Server</label>
         <div class="select">
@@ -71,85 +71,64 @@
           </select>
         </div>
       </div>
-      <div>
+      <div class="flex flex-column h-full" >
         <label class="flex flex-row items-center justify-between">
           <span>Message</span>
           <div v-if="error" class="error">{{ error }}</div>
         </label>
-        
-        <div class="input-wrapper">
+
+        <div class="input-wrapper h-full">
           <textarea
             v-model="message"
             :disabled="!selectedChannel || !selectedGuild"
-            placeholder="Type your message here..." ></textarea>
-          <div class="flex flex-row items-center justify-end"><EmojiPicker
-            :disabled="!selectedChannel || !selectedGuild"
-            @emoji-selected="appendEmoji"></EmojiPicker>
-          <button
-            type="submit"
-            class="submit"
-            :class="{ disabled: !isValidForm }"
-            :disabled="!isValidForm || !selectedChannel || !selectedGuild">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
-            </svg>
-          </button></div>
+            placeholder="Type your message here..."></textarea>
+          <div class="flex flex-row items-center justify-end">
+            <EmojiPicker
+              :disabled="!selectedChannel || !selectedGuild"
+              @emoji-selected="appendEmoji"></EmojiPicker>
+            <button
+              type="submit"
+              class="submit"
+              :class="{ disabled: !isValidForm }"
+              :disabled="!isValidForm || !selectedChannel || !selectedGuild">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </form>
-    <div class="footer">
-      Discord Bot Messenger is a fan-made service created by John Uberbacher.
-      This app is not affiliated with or endorsed by Discord, and no ownership
-      or rights are claimed.
-    </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
 import EmojiPicker from "./EmojiPicker.vue";
-
-const fileInput = ref(null);
-const selectedFile = ref(null);
-const buttonText = ref("");
-const handleFileChange = () => {
-  clearFile();
-  const file = fileInput.value.files[0];
-  if (file) {
-    selectedFile.value = file;
-    buttonText.value = file.name;
-  }
-};
-const clearFile = () => {
-  selectedFile.value = null;
-  buttonText.value = "";
-};
-
 const emit = defineEmits();
 const props = defineProps([
   "botName",
   "botAvatar",
   "botDiscriminator",
   "guilds",
+  "users",
   "channels",
   "botToken",
   "client",
 ]);
 
-// State variables
 const selectedGuildId = ref("");
 const selectedChannel = ref("");
 const error = ref("");
 const message = ref("");
-const file = ref("");
 
 // Computed property to get the name of the selected guild
 const selectedGuild = computed(() => {
@@ -173,44 +152,35 @@ const isValidForm = computed(() => {
 });
 
 // Method to submit the form and send the message
-const submitForm = () => {
+const submitForm = async () => {
   if (isValidForm.value) {
-    // Find the selected channel object
     const selectedChannelObj = props.channels.find(
       (channel) => channel.id === selectedChannel.value
     );
 
     if (selectedChannelObj) {
-      let filesToSend = [];
+      try {
+        const trimmedMessage = message.value.trim();
 
-      if (selectedFile.value) {
-        var testchart = `http://jegin.net/testchart2.php?sysid=268.png`;
+        // Check if the message length is over 2000 characters
+        if (trimmedMessage.length > 2000) {
+          emit("displayError", "Error: Message exceeds 2000 characters.");
+          return;
+        }
 
-        const filePath = selectedFile.value.path.toString();
-        // filesToSend.push({ attachment: 'https://i.imgur.com/y2ePdmF.jpg', name: selectedFile.value.name } );
-        console.log(filePath);
-        console.log(filesToSend);
-      }
-
-      // Send the message using the client instance and appropriate methods
-      props.client.channels.cache
-        .get(selectedChannelObj.id)
-        .send({
-          content: message.value.trim(),
-        })
-        .then(() => {
-          // Message sent successfully
-          emit("messageSent");
-          // Clear the message input field and file input
-          message.value = "";
-          clearFile();
-        })
-        .catch((error) => {
-          emit("displayError", "Error sending message:" + error);
+        await props.client.channels.cache.get(selectedChannelObj.id).send({
+          content: trimmedMessage,
         });
+
+        emit("messageSent");
+        message.value = "";
+      } catch (error) {
+        emit("displayError", "Error sending message: " + error.message);
+      }
     }
   }
 };
+
 </script>
 
 <style lang="scss" scoped>

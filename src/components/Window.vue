@@ -20,7 +20,7 @@
       </div>
       <div>
         <svg
-          @click="$emit('toggleConfig')"
+          @click="$emit('toggleModal')"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -71,13 +71,18 @@
           </select>
         </div>
       </div>
-      <div class="flex flex-column h-full" >
+      <div class="flex flex-column h-full">
         <label class="flex flex-row items-center justify-between">
           <span>Message</span>
           <div v-if="error" class="error">{{ error }}</div>
         </label>
-
         <div class="input-wrapper h-full">
+          <FilePicker
+            :disabled="!selectedChannel || !selectedGuild"
+            :media="media"
+            @updateMedia="updateMedia"
+            @clear-media="clearMedia"
+            @file-selected="appendMedia" />
           <textarea
             v-model="message"
             :disabled="!selectedChannel || !selectedGuild"
@@ -85,7 +90,7 @@
           <div class="flex flex-row items-center justify-end">
             <EmojiPicker
               :disabled="!selectedChannel || !selectedGuild"
-              @emoji-selected="appendEmoji"></EmojiPicker>
+              @emoji-selected="appendEmoji" />
             <button
               type="submit"
               class="submit"
@@ -113,6 +118,7 @@
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
 import EmojiPicker from "./EmojiPicker.vue";
+import FilePicker from "./FilePicker.vue";
 const emit = defineEmits();
 const props = defineProps([
   "botName",
@@ -129,6 +135,7 @@ const selectedGuildId = ref("");
 const selectedChannel = ref("");
 const error = ref("");
 const message = ref("");
+const media = ref("");
 
 // Computed property to get the name of the selected guild
 const selectedGuild = computed(() => {
@@ -138,6 +145,18 @@ const selectedGuild = computed(() => {
   return selectedGuildObj?.name || "";
 });
 
+const clearMedia = (file) => {
+  media.value = '';
+};
+
+const updateMedia = (file) => {
+  media.value = file;
+};
+
+const appendMedia = (file) => {
+  media.value = file;
+};
+
 const appendEmoji = (emoji) => {
   message.value += emoji;
 };
@@ -146,7 +165,7 @@ const appendEmoji = (emoji) => {
 const isValidForm = computed(() => {
   return (
     selectedChannel.value &&
-    message.value.trim() &&
+    (message.value.trim() || media.value) &&
     selectedGuildId.value !== ""
   );
 });
@@ -160,20 +179,29 @@ const submitForm = async () => {
 
     if (selectedChannelObj) {
       try {
-        const trimmedMessage = message.value.trim();
+        let finalMessage = '';
 
-        // Check if the message length is over 2000 characters
-        if (trimmedMessage.length > 2000) {
+        if (media.value) {
+          finalMessage += media.value + ' ';
+        }
+
+        if (message.value) {
+          finalMessage += message.value.trim();
+        }
+
+        // Check if the final message length is over 2000 characters
+        if (finalMessage.length > 2000) {
           emit("displayError", "Error: Message exceeds 2000 characters.");
           return;
         }
 
         await props.client.channels.cache.get(selectedChannelObj.id).send({
-          content: trimmedMessage,
+          content: finalMessage,
         });
 
         emit("messageSent");
         message.value = "";
+        media.value = ""; 
       } catch (error) {
         emit("displayError", "Error sending message: " + error.message);
       }

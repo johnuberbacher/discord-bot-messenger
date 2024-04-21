@@ -12,21 +12,21 @@
       :isBotConnected="isBotConnected"
       :client="client"
       :botToken="botToken"
-      @toggleConfig="toggleConfig"
+      @toggleModal="toggleModal"
       @messageSent="messageSent"
       @displayError="displayError" />
     <transition name="fade" appear>
       <Toast :toastMessage="toastMessage" v-show="showToast" />
     </transition>
     <transition name="fade" appear>
-      <ErrorToast :errorMessage="errorMessage" v-show="showError"/>
+      <ErrorToast :errorMessage="errorMessage" v-show="showError" />
     </transition>
     <Config
       v-if="showConfig || !connectedToBot"
       :connectedToBot="connectedToBot"
       :botToken="botToken"
       @connectToDiscordBot="connectToDiscordBot"
-      @toggleConfig="toggleConfig" />
+      @toggleModal="toggleModal" />
   </div>
 </template>
 
@@ -70,13 +70,13 @@ const client = new Client({
 });
 
 // Function to show/hide the configuration window
-const toggleConfig = () => {
+const toggleModal = () => {
   showConfig.value = !showConfig.value;
 };
 
 // Function to show a toast message and hide it after 3 seconds
 const displayError = (error) => {
-  console.log('error here', error)
+  console.log("error here", error);
   errorMessage.value = error;
   showError.value = true;
   setTimeout(() => {
@@ -117,7 +117,8 @@ const connectToDiscordBot = async () => {
         .map((channel) => ({
           id: channel.id,
           name: channel.name,
-        }));
+        }))
+        .slice(0, -1);
 
       connectedToBot.value = true;
     });
@@ -125,11 +126,9 @@ const connectToDiscordBot = async () => {
     connectedToBot.value = false;
     console.error("Error connecting to Discord bot:", error);
   } finally {
-    // The 'toggleConfig' call is commented out as it's not used in the code
-    // toggleConfig();
+    // toggleModal();
   }
 };
-
 
 // Define a reactive variable to track whether the bot is connected or not
 const isBotConnected = ref(false);

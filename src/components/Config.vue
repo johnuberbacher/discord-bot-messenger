@@ -1,7 +1,7 @@
 <template>
-  <div class="config shadow" @click.self="dismissConfig">
+  <div class="modal shadow" @click.self="toggleModal">
     <div
-      class="config-window flex flex-column gap-1 items-end shadow"
+      class="flex flex-column gap-1 items-end shadow"
       @click.stop
       :class="{ shake: isShaking }">
       <div class="w-full">
@@ -15,12 +15,12 @@
         </div>
       </div>
       <div class="w-full flex flex-row items-center justify-between gap-1">
-        <div class="error w-full">{{ error ?? "" }}</div>
+        <div class="error w-full position-relative">{{ error ?? "" }}</div>
         <div class="flex flex-row gap-1">
           <button
             v-if="!discordBotTokenStorage.value || discordBotTokenStorage.value.length < 12"
             class="button button-link"
-            @click="dismissConfig"
+            @click="toggleModal"
             :disabled="isLoading">
             Cancel
           </button>
@@ -114,12 +114,12 @@ const saveConfig = async () => {
   if (validateBotConnection()) {
     error.value = "";
     isLoading.value = false;
-    emit("toggleConfig");
+    emit("toggleModal");
   }
 };
 
 // Function to dismiss the configuration without saving
-const dismissConfig = () => {
+const toggleModal = () => {
   if (!store.get("discordBotTokenStorage")) {
     error.value = "Please enter a bot token";
     shake();
@@ -128,7 +128,7 @@ const dismissConfig = () => {
   }
 
   error.value = "";
-  emit("toggleConfig");
+  emit("toggleModal");
 };
 
 // When the component is mounted, update the discordBotTokenStorage value from the store
@@ -138,241 +138,4 @@ onMounted(() => {
 </script>
 
 <style scoped lang="scss">
-.config {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: absolute;
-  z-index: 3;
-  padding: 1rem 2rem;
-  top: 22px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.75);
-  > div {
-    width: 100%;
-    max-width: calc(530px - 8rem);
-    margin: 0px;
-    padding: 1rem;
-    border-radius: 3px;
-    background-color: var(--base-200);
-    font-family: "gg sans", sans-serif;
-    font-size: 12px;
-    color: var(--base-text-label);
-  }
-  .input-wrapper input {
-    border-radius: 8px;
-  }
-  .button {
-    &.button-primary {
-      min-width: 65px;
-      position: relative;
-      display: block;
-      svg {
-        animation: 1.5s linear infinite spinner;
-        width: 1.5rem;
-        height: 1.5rem;
-        min-width: 1.5rem;
-        min-height: 1.5rem;
-        position: absolute;
-      }
-    }
-  }
-  .shake {
-    animation: shake 250ms 1 linear;
-    -moz-animation: shake 250ms 1 linear;
-    -webkit-animation: shake 250ms 1 linear;
-    -o-animation: shake 250ms 1 linear;
-  }
-}
-
-@keyframes spinner {
-  0% {
-    transform: translate3d(-50%, -50%, 0) rotate(0deg);
-  }
-  100% {
-    transform: translate3d(-50%, -50%, 0) rotate(360deg);
-  }
-}
-
-@keyframes shake {
-  0% {
-    transform: translate(3px, 0);
-  }
-  10% {
-    transform: translate(0, 3px);
-  }
-  20% {
-    transform: translate(-3px, 0);
-  }
-  30% {
-    transform: translate(0, -3px);
-  }
-  40% {
-    transform: translate(2px, 3px);
-  }
-  50% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 2px);
-  }
-  70% {
-    transform: translate(-2px, -1px);
-  }
-  80% {
-    transform: translate(1px, 3px);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-@-moz-keyframes shake {
-  0% {
-    transform: translate(3px, 0);
-  }
-  10% {
-    transform: translate(0, 3px);
-  }
-  20% {
-    transform: translate(-3px, 0);
-  }
-  30% {
-    transform: translate(0, -3px);
-  }
-  40% {
-    transform: translate(2px, 3px);
-  }
-  50% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 2px);
-  }
-  70% {
-    transform: translate(-2px, -1px);
-  }
-  80% {
-    transform: translate(1px, 3px);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-@-webkit-keyframes shake {
-  0% {
-    transform: translate(3px, 0);
-  }
-  10% {
-    transform: translate(0, 3px);
-  }
-  20% {
-    transform: translate(-3px, 0);
-  }
-  30% {
-    transform: translate(0, -3px);
-  }
-  40% {
-    transform: translate(2px, 3px);
-  }
-  50% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 2px);
-  }
-  70% {
-    transform: translate(-2px, -1px);
-  }
-  80% {
-    transform: translate(1px, 3px);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-@-ms-keyframes shake {
-  0% {
-    transform: translate(3px, 0);
-  }
-  10% {
-    transform: translate(0, 3px);
-  }
-  20% {
-    transform: translate(-3px, 0);
-  }
-  30% {
-    transform: translate(0, -3px);
-  }
-  40% {
-    transform: translate(2px, 3px);
-  }
-  50% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 2px);
-  }
-  70% {
-    transform: translate(-2px, -1px);
-  }
-  80% {
-    transform: translate(1px, 3px);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-@-o-keyframes shake {
-  0% {
-    transform: translate(3px, 0);
-  }
-  10% {
-    transform: translate(0, 3px);
-  }
-  20% {
-    transform: translate(-3px, 0);
-  }
-  30% {
-    transform: translate(0, -3px);
-  }
-  40% {
-    transform: translate(2px, 3px);
-  }
-  50% {
-    transform: translate(-1px, -2px);
-  }
-  60% {
-    transform: translate(3px, 2px);
-  }
-  70% {
-    transform: translate(-2px, -1px);
-  }
-  80% {
-    transform: translate(1px, 3px);
-  }
-  90% {
-    transform: translate(-3px, 1px);
-  }
-  100% {
-    transform: translate(0, 0);
-  }
-}
 </style>

@@ -76,7 +76,6 @@ const toggleModal = () => {
 
 // Function to show a toast message and hide it after 3 seconds
 const displayError = (error) => {
-  console.log("error here", error);
   errorMessage.value = error;
   showError.value = true;
   setTimeout(() => {

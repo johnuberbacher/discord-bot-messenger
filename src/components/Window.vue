@@ -75,14 +75,14 @@
         <label class="flex flex-row items-center justify-between">
           <span>Message</span>
           <div v-if="error" class="error">{{ error }}</div>
+          <div v-else-if="mediaWarning" class="warning">{{ mediaWarning }}</div>
         </label>
         <div class="input-wrapper h-full">
           <FilePicker
-            :disabled="!selectedChannel || !selectedGuild"
+            :disabled="!selectedChannel || !selectedGuild || isSending"
             :media="media"
-            @updateMedia="updateMedia"
-            @clear-media="clearMedia"
-            @file-selected="appendMedia" />
+            @update-media="updateMedia"
+            @display-error="displayError" />
           <textarea
             v-model="message"
             :disabled="!selectedChannel || !selectedGuild"
@@ -94,8 +94,8 @@
             <button
               type="submit"
               class="submit"
-              :class="{ disabled: !isValidForm }"
-              :disabled="!isValidForm || !selectedChannel || !selectedGuild">
+              :class="{ disabled: !isValidForm || isSending }"
+              :disabled="!isValidForm || isSending">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -117,6 +117,7 @@
 
 <script setup>
 import { ref, computed, defineProps, defineEmits } from "vue";
+import { ipcRenderer } from "electron";
 import EmojiPicker from "./EmojiPicker.vue";
 import FilePicker from "./FilePicker.vue";
 const emit = defineEmits();
@@ -135,7 +136,8 @@ const selectedGuildId = ref("");
 const selectedChannel = ref("");
 const error = ref("");
 const message = ref("");
-const media = ref("");
+const media = ref(null);
+const isSending = ref(false);
 
 // Computed property to get the name of the selected guild
 const selectedGuild = computed(() => {
@@ -145,16 +147,15 @@ const selectedGuild = computed(() => {
   return selectedGuildObj?.name || "";
 });
 
-const clearMedia = (file) => {
-  media.value = '';
-};
-
 const updateMedia = (file) => {
   media.value = file;
 };
 
-const appendMedia = (file) => {
-  media.value = file;
+// Non-blocking heads-up, e.g. a file larger than an unboosted server allows
+const mediaWarning = computed(() => media.value?.warning ?? "");
+
+const displayError = (error) => {
+  emit("displayError", error);
 };
 
 const appendEmoji = (emoji) => {
@@ -172,40 +173,56 @@ const isValidForm = computed(() => {
 
 // Method to submit the form and send the message
 const submitForm = async () => {
-  if (isValidForm.value) {
-    const selectedChannelObj = props.channels.find(
-      (channel) => channel.id === selectedChannel.value
-    );
+  // Guards against a second submit while the upload is still in flight
+  if (!isValidForm.value || isSending.value) return;
 
-    if (selectedChannelObj) {
-      try {
-        let finalMessage = '';
+  const selectedChannelObj = props.channels.find(
+    (channel) => channel.id === selectedChannel.value
+  );
+  const channel = props.client.channels.cache.get(selectedChannelObj?.id);
 
-        if (media.value) {
-          finalMessage += media.value + ' ';
-        }
+  if (!channel) {
+    emit("displayError", "That channel is no longer available.");
+    return;
+  }
 
-        if (message.value) {
-          finalMessage += message.value.trim();
-        }
+  isSending.value = true;
 
-        // Check if the final message length is over 2000 characters
-        if (finalMessage.length > 2000) {
-          emit("displayError", "Error: Message exceeds 2000 characters.");
-          return;
-        }
+  try {
+    const content = message.value.trim();
 
-        await props.client.channels.cache.get(selectedChannelObj.id).send({
-          content: finalMessage,
-        });
+    // Check if the message length is over 2000 characters
+    if (content.length > 2000) {
+      emit("displayError", "Error: Message exceeds 2000 characters.");
+      return;
+    }
 
-        emit("messageSent");
-        message.value = "";
-        media.value = ""; 
-      } catch (error) {
-        emit("displayError", "Error sending message: " + error.message);
+    // The file may have been moved or deleted since it was picked
+    if (media.value) {
+      const check = await ipcRenderer.invoke("checkImageFile", media.value.path);
+
+      if (check?.error) {
+        media.value = null;
+        emit("displayError", check.error);
+        return;
       }
     }
+
+    await channel.send({
+      content,
+      // Uploads the picked image as a real attachment, read from disk
+      files: media.value
+        ? [{ attachment: media.value.path, name: media.value.name }]
+        : [],
+    });
+
+    emit("messageSent");
+    message.value = "";
+    media.value = null;
+  } catch (error) {
+    emit("displayError", "Error sending message: " + error.message);
+  } finally {
+    isSending.value = false;
   }
 };
 

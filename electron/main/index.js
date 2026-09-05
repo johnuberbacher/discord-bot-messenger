@@ -1,7 +1,8 @@
-const { app, BrowserWindow, shell, ipcMain } = require("electron");
+const { app, BrowserWindow, dialog, shell, ipcMain } = require("electron");
 const { release } = require("os");
 const { join } = require("path");
 const Store = require('electron-store');
+const { IMAGE_EXTENSIONS, inspectImageFile } = require("./imageFile");
 
 // The built directory structure
 //
@@ -134,6 +135,29 @@ ipcMain.on("toggleMaximize", () => {
 ipcMain.on("closeWindow", () => {
   const window = BrowserWindow.getFocusedWindow();
   if (window) window.close();
+});
+
+ipcMain.handle("selectImageFile", async () => {
+  const window = BrowserWindow.getFocusedWindow();
+  const { canceled, filePaths } = await dialog.showOpenDialog(window, {
+    title: "Select an image",
+    buttonLabel: "Attach",
+    properties: ["openFile"],
+    filters: [{ name: "Images", extensions: IMAGE_EXTENSIONS }],
+  });
+
+  // Null means the user cancelled the dialog
+  if (canceled || !filePaths.length) return null;
+
+  return inspectImageFile(filePaths[0]);
+});
+
+ipcMain.handle("checkImageFile", async (_, path) => {
+  if (typeof path !== "string" || !path) {
+    return { error: "No image selected." };
+  }
+
+  return inspectImageFile(path, { withPreview: false });
 });
 
 // New window example arg: new windows url

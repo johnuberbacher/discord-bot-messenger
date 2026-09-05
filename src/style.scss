@@ -6,6 +6,7 @@
   // --base-success: rgb(38, 126, 70);
   --base-success: rgb(35 165 90);
   --base-danger: rgb(214, 59, 64);
+  --base-warning: rgb(240, 178, 50);
   --base-100: #383a40;
   --base-200: #313338;
   --base-300: #2b2d31;
@@ -81,6 +82,10 @@ body,
 
 .error {
   color: var(--base-danger);
+}
+
+.warning {
+  color: var(--base-warning);
 }
 
 .text-left {

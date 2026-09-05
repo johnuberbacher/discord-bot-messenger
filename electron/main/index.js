@@ -2,7 +2,8 @@ const { app, BrowserWindow, dialog, shell, ipcMain } = require("electron");
 const { release } = require("os");
 const { join } = require("path");
 const Store = require('electron-store');
-const { IMAGE_EXTENSIONS, inspectImageFile } = require("./imageFile");
+// Imported rather than required so the bundler inlines it into the build
+import { IMAGE_EXTENSIONS, inspectImageFile } from "./imageFile";
 
 // The built directory structure
 //

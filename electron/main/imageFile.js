@@ -1,5 +1,5 @@
-const { open, readFile, stat } = require("fs/promises");
-const { basename } = require("path");
+import { open, readFile, stat } from "fs/promises";
+import { basename } from "path";
 
 // Image types Discord renders inline, with the signature bytes that prove it.
 // Extensions lie, so the file header decides whether we accept a file at all.
@@ -121,4 +121,4 @@ async function inspectImageFile(path, { withPreview = true } = {}) {
   }
 }
 
-module.exports = { IMAGE_EXTENSIONS, inspectImageFile };
+export { IMAGE_EXTENSIONS, inspectImageFile };

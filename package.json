@@ -18,6 +18,12 @@
     "productName": "Discord Bot Messenger",
     "appId": "com.johnuberbacher.discordbotmessenger",
     "asar": true,
+    "files": [
+      "dist/**",
+      "dist-electron/**",
+      "node_modules/**",
+      "package.json"
+    ],
     "directories": {
       "output": "release/${version}"
     },

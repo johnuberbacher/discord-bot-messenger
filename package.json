@@ -29,7 +29,8 @@
     },
     "win": {
       "target": [
-        "portable", "zip"
+        "portable",
+        "zip"
       ],
       "icon": "public/favicon.ico",
       "artifactName": "${productName}.${ext}",
@@ -42,16 +43,17 @@
       "allowToChangeInstallationDirectory": true,
       "createStartMenuShortcut": true,
       "deleteAppDataOnUninstall": false,
-			"installerIcon": "public/favicon.ico",
-			"uninstallerIcon": "public/favicon.ico",
-			"uninstallDisplayName": "Uninstall",
-			"license": "public/license.txt"
+      "installerIcon": "public/favicon.ico",
+      "uninstallerIcon": "public/favicon.ico",
+      "uninstallDisplayName": "Uninstall",
+      "license": "public/license.txt"
     }
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.1.0",
     "electron": "^25.0.1",
     "electron-builder": "^24.4.0",
+    "sass": "^1.83.0",
     "vite": "^4.1.4",
     "vite-plugin-electron": "^0.12.0",
     "vite-plugin-electron-renderer": "^0.14.1",

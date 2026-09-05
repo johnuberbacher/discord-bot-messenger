@@ -197,24 +197,17 @@ const submitForm = async () => {
       return;
     }
 
-    // The file may have been moved or deleted since it was picked
-    if (media.value) {
-      const check = await ipcRenderer.invoke("checkImageFile", media.value.path);
-
-      if (check?.error) {
-        media.value = null;
-        emit("displayError", check.error);
-        return;
-      }
-    }
-
-    await channel.send({
+    // Sent from the main process; uploading from here crashes the renderer
+    const result = await ipcRenderer.invoke("sendMessage", {
+      channelId: channel.id,
       content,
-      // Uploads the picked image as a real attachment, read from disk
-      files: media.value
-        ? [{ attachment: media.value.path, name: media.value.name }]
-        : [],
+      imagePath: media.value?.path,
     });
+
+    if (result.error) {
+      emit("displayError", result.error);
+      return;
+    }
 
     emit("messageSent");
     message.value = "";

@@ -4,6 +4,8 @@ const { join } = require("path");
 const Store = require('electron-store');
 // Imported rather than required so the bundler inlines it into the build
 import { IMAGE_EXTENSIONS, inspectImageFile } from "./imageFile";
+import { readFile } from "fs/promises";
+import { REST, Routes } from "discord.js";
 
 // The built directory structure
 //
@@ -153,12 +155,46 @@ ipcMain.handle("selectImageFile", async () => {
   return inspectImageFile(filePaths[0]);
 });
 
-ipcMain.handle("checkImageFile", async (_, path) => {
-  if (typeof path !== "string" || !path) {
-    return { error: "No image selected." };
+// Messages are sent from here rather than the renderer: discord.js builds
+// uploads with undici's FormData and hands them to fetch, which is Chromium's
+// fetch in a renderer, and that interop crashes the renderer process outright.
+// Only REST is needed to post, so the renderer keeps its gateway client for
+// listing servers and channels.
+ipcMain.handle("sendMessage", async (_event, { channelId, content, imagePath } = {}) => {
+  if (!/^\d+$/.test(String(channelId ?? ""))) {
+    return { error: "No channel selected." };
   }
 
-  return inspectImageFile(path, { withPreview: false });
+  const token = store.get("discordBotTokenStorage");
+
+  if (!token) {
+    return { error: "No bot token saved. Open settings and add one." };
+  }
+
+  const files = [];
+
+  if (imagePath) {
+    // The file may have been moved or altered since it was picked
+    const image = await inspectImageFile(imagePath, { withPreview: false });
+
+    if (image.error) return image;
+
+    files.push({ name: image.name, data: await readFile(image.path) });
+  }
+
+  try {
+    const rest = new REST({ version: "10" }).setToken(token);
+
+    await rest.post(Routes.channelMessages(channelId), {
+      body: { content },
+      files,
+    });
+
+    return { sent: true };
+  } catch (error) {
+    // Discord's own wording is more useful than a generic failure
+    return { error: error.rawError?.message ?? error.message ?? "Send failed." };
+  }
 });
 
 // New window example arg: new windows url

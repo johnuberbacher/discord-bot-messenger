@@ -5,7 +5,6 @@ const Store = require('electron-store');
 // Imported rather than required so the bundler inlines it into the build
 import { IMAGE_EXTENSIONS, inspectImageFile } from "./imageFile";
 import { readFile } from "fs/promises";
-import { REST, Routes } from "discord.js";
 
 // The built directory structure
 //
@@ -155,11 +154,14 @@ ipcMain.handle("selectImageFile", async () => {
   return inspectImageFile(filePaths[0]);
 });
 
-// Messages are sent from here rather than the renderer: discord.js builds
-// uploads with undici's FormData and hands them to fetch, which is Chromium's
-// fetch in a renderer, and that interop crashes the renderer process outright.
-// Only REST is needed to post, so the renderer keeps its gateway client for
-// listing servers and channels.
+// Messages are sent from here rather than the renderer for two reasons:
+// discord.js builds uploads with undici's FormData and hands them to fetch,
+// which is Chromium's fetch in a renderer and crashes the process outright;
+// and its REST client reaches for the ESM-only file-type package, which Node
+// cannot resolve from inside an asar in the portable build. Posting a message
+// is one multipart request, so it is done here with Node's own fetch.
+const DISCORD_API = "https://discord.com/api/v10";
+
 ipcMain.handle("sendMessage", async (_event, { channelId, content, imagePath } = {}) => {
   if (!/^\d+$/.test(String(channelId ?? ""))) {
     return { error: "No channel selected." };
@@ -171,7 +173,8 @@ ipcMain.handle("sendMessage", async (_event, { channelId, content, imagePath } =
     return { error: "No bot token saved. Open settings and add one." };
   }
 
-  const files = [];
+  const form = new FormData();
+  form.append("payload_json", JSON.stringify({ content }));
 
   if (imagePath) {
     // The file may have been moved or altered since it was picked
@@ -179,21 +182,26 @@ ipcMain.handle("sendMessage", async (_event, { channelId, content, imagePath } =
 
     if (image.error) return image;
 
-    files.push({ name: image.name, data: await readFile(image.path) });
+    const data = await readFile(image.path);
+    form.append("files[0]", new Blob([data], { type: image.mimeType }), image.name);
   }
 
   try {
-    const rest = new REST({ version: "10" }).setToken(token);
-
-    await rest.post(Routes.channelMessages(channelId), {
-      body: { content },
-      files,
+    const response = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
+      method: "POST",
+      headers: { Authorization: `Bot ${token}` },
+      body: form,
     });
+
+    if (!response.ok) {
+      // Discord's own wording is more useful than a bare status code
+      const body = await response.json().catch(() => ({}));
+      return { error: body.message ?? `${response.status} ${response.statusText}` };
+    }
 
     return { sent: true };
   } catch (error) {
-    // Discord's own wording is more useful than a generic failure
-    return { error: error.rawError?.message ?? error.message ?? "Send failed." };
+    return { error: "Could not reach Discord: " + error.message };
   }
 });
 
